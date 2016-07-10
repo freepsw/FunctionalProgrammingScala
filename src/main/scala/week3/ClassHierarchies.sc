@@ -1,8 +1,17 @@
+object insets {
+  println("Welcome to the scala")
+  val t1 = new NonEmpty(3, new Empty, new Empty)
+  val t2 = t1 incl 4
+}
+
+val t1 = new NonEmpty(3, new Empty, new Empty)
+val t2 = t1 incl 4
 
 // 내부 함수에 대한 implementation이 없음
 // new를 통해서 abstract class에 대한 instance를 생성할 수 없음.
 abstract class InSet {
   def incl(x: Int): InSet
+
   def contains(x: Int): Boolean
 }
 
@@ -14,25 +23,31 @@ abstract class InSet {
 class Empty extends InSet {
   def contains(x: Int): Boolean = false
   def incl(x: Int): InSet = new NonEmpty(x, new Empty, new Empty)
+  override def toString: String = "."
 }
 
 // 마지막 node를 제외하고는 대부분 데이터가 있음.
 // contains에서 input x가 현재 Node의 elem보다 작으면 left Node의 contains를 호출
 // x == elem이면 true를 리턴 (현재 찾고 이는 Node임)
 // incl은 새로운 추가함..
-//
+// week3-4_01.PNG 이미지 참고.
+
 class NonEmpty(elem: Int, left: InSet, right: InSet) extends InSet {
   def contains(x: Int): Boolean =
     if (x < elem) left contains x
     else if (x > elem) right contains x
     else true
 
-  def incl(x: Int): InSet =
+  def incl(x: Int): InSet = {
+    println(s"x:elem = $x:$elem")
+
     if (x < elem) new NonEmpty(elem, left incl x, right)
-    else if(x > elem) new NonEmpty(elem, left, right incl x)
+    else if (x > elem) new NonEmpty(elem, left, right incl x)
     else this
+  }
+
+  override def toString: String = s"{ $left  $elem  $right }"
 }
 
-object insets {
-  println("Welcome to the scala")
-}
+
+

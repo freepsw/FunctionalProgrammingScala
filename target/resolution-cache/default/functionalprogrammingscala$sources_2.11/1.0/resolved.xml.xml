@@ -4,7 +4,7 @@
 		module="functionalprogrammingscala$sources_2.11"
 		revision="1.0"
 		status="integration"
-		publication="20160710194730"
+		publication="20160710220705"
 	/>
 	<configurations>
 		<conf name="compile" visibility="public" description=""/>

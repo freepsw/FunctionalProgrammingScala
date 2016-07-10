@@ -38,5 +38,12 @@ object exercise {
   sqrt(2)
 
 
+  type Set = Int => Boolean
+
+  def singletonSet(elem: Int): Set = (x => x == elem)
+  def contains(s: Set, elem: Int): Boolean = s(elem)
+  val s1 = singletonSet(1)
+  s1(2)
+
 
 }
