@@ -1,4 +1,4 @@
-
+object scratch{
 // incl Test code
 /*val t1 = new NonEmptySet(3, new EmptySet, new EmptySet)
 val t2 = t1 incl 4*/
@@ -64,6 +64,29 @@ class NonEmptySet(elem: Int, left: IntSet, right: IntSet) extends IntSet {
     */
     ((left union right) union other) incl elem
   }
+}
+
+
+
+/*
+ - Scala Class Hierachy picture
+ AnyVal 아래의 short, int, long, float간에 점선으로 표시된 것의 의미는
+ subType은 아니지만 상호간에 conversion이 가능하다는 의미이다.
+ subType으로 표시되려면,
+ 별도의 변환과정 없이 long -> float으로 변환되어야 하며,
+ long->float으로 변환되면서 데이터의 손실도 없어야 한다.
+
+ - Nothing
+  abnomal 종료를 반환하는 용도.
+   - java " throw Exception"
+   - scala는 nothing을 반
+  empty collection에 대한 기초 type을 제공
+  Set [Nothing]
+*/
+
+
+
+  def error(msg: String) = throw new Error(msg)
 }
 
 
