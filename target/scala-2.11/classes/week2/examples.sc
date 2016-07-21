@@ -17,8 +17,4 @@ object examples {
     mapReduce(f, (x, y) => x * y, 1)(a, b)
   }
   productMapReduce(x => x * x)(3, 4)
-
-
-
-
 }

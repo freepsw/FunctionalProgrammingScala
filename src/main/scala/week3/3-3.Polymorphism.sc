@@ -1,6 +1,37 @@
 object test {
   def toList[A](a: A) = List(a)
 
+  trait List[T] {
+    def isEmpty: Boolean
+    def head: T
+    def tail: List[T]
+  }
+
+  class Cons[T](val head:T, val tail:List[T]) extends List[T] {
+    def isEmpty = false
+  }
+
+  class Nil[T] extends List[T] {
+    def isEmpty: Boolean = true
+    def head: Nothing = throw new NoSuchElementException("Nil.head")
+    def tail: Nothing = throw new NoSuchElementException("Nil.tail")
+  }
+
+  def singleton[T](elem: T) = new Cons[T](elem, new Nil[T])
+  singleton[Int](1)
+  singleton[Boolean](true)
+  singleton(1)  // 이와 같이 Type parameter를 생략해도 type추론 가능.
+  /*
+  Types and Evaluation
+  - Type 정보는 compile 시점에서만 유효함.
+  - runtime 시점에서는 type 정보를 유지하지 않음.
+  - 일부 C++, C#, F#에서만 runtime 시점에 type을 유지.
+  */
+
+
+  val s1 = "c body"
+  val s2 = "b body"
+  val b = s1 > s2
 
 
 }

@@ -75,4 +75,20 @@ p.name
 
 
 
-2
+val vector = scala.collection.immutable.Vector.empty
+println(vector)
+
+// Add new value at end of vector.
+val vector2 = vector :+ 5
+println(vector2)
+
+// Add 2 new values at end of vector.
+val vector3 = vector2 :+ 10 :+ 20
+println(vector3)
+
+// Add new value at start of vector.
+val vector4 = 100 +: vector3
+
+vector4.contains(5)
+
+val txt = ""
