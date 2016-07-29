@@ -15,16 +15,16 @@ object ClassHierarchies {
     val m2 = m1 incl 19
     val m3 = m2 incl 17
     val m4 = m3 incl 15
-    val m5 = m4 incl 27
+    val m5 = m2 incl 27
     val m6 = m5 incl 22
 
     val n1 = new NonEmptySet(9, new EmptySet, new EmptySet)
     val n2 = n1 incl 10
 
-    println(m6.toString)
+    println(m5.toString)
     println(n2)
 
-    val u = m6 union n2
+    val u = m5 union n2
 
 
     /*
@@ -90,7 +90,7 @@ object ClassHierarchies {
         u4: IntSet = {.1{{.2{.3.}}5.}}
     */
     // 아래 2개 연산은 동일하다 (1 incl 2 vs 1 union 2)
-    // 그런데 결과는 서로 다르다.
+    // 그런데 결과는 서로 다르다. => 당연히 다르지.. 설명 추가예정
     // 1 incl 2는 {.1{.2.}} => 1의 right node에 2를 추가
     // 1 union 2는 {{.1.}2.} => 2의 left node에 1을 추
     // 왜 NonEmptySet의 union은 lefe와 right를 먼저 union 할까?
