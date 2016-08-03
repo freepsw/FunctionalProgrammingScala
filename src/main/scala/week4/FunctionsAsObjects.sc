@@ -28,3 +28,18 @@ object List {
 
 (x: Int) => x*x
 List()
+
+
+class Calc {
+  var sum = 0
+  def add(b: Byte): Unit = {
+    sum += b
+  }
+}
+
+object ExCalc {
+  def main(args: Array[String]) : Unit = {
+    var c = new Calc
+
+  }
+}
