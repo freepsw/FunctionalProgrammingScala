@@ -127,7 +127,7 @@ type B = NonEmpty => IntSet
 
 - Function에 대한 rule
 ```
-If A2 <:A1 and B1 <: B2
+If A2 <: A1 and B1 <: B2
 then
   A1 => B1 <: A2 => B2
 ```
@@ -165,7 +165,7 @@ trait List[+T] {
   def prepend(elem: T): List[T] = new Cons(elem, this)
 }
 ```
-왜 위의 code는 non type-chek 에러가 발생하는가?
+왜 위의 code는 non type-check 에러가 발생하는가?
 So what we get is an error, which says "covariant type T occurs in contravariant position in type T of value elem."
 위의 variance check에서 정의한 Rul에 따르면 method parameter에서는 contravariant만 나타나게 되어 있지만, prepend에서는 covariant인 T을 입력값으로 설정하였다.
 이는 LSP를 위반하기 때문이다.
@@ -179,8 +179,9 @@ List[NonEmpty]의 type인 ys에서 ys.prepend(Empty)를 실행하면 에러가 �
  - required: NonEmpty
  - found: Empty
 이는 Empty는 NonEmpty의 하위 typd이 아니기 때문에 발생한다.
+trait List[+T]로 선언했기 때문에 T인 NonEmpty 하위 class만 적용이 가능하다.
 
-결과적으로 List[NonEmpty]이 List[IntSet]의 subtype이 될수 없다.
+결과적으로 위 방식으로는 List[NonEmpty]이 List[IntSet]의 subtype이 될수 없다.  
 
 ## Lower bounds
 하지만, prepend는 immutable list를 가지는 자연스로운 method이다.
@@ -191,8 +192,8 @@ lower bound를 활용해 보자
 def prepend [U >: T] (elem: U): List[U] = new Cons(elem, this)
 ```
 variance check에서 에러가 발생하지 않는다. 왜냐하면
-- covariant type parameter(T)가 method type parameter의 lower bound에 포함된다.
-- contravariant type parameter(U)가 upper bound에 포함된다.
+- covariant type parameter(T)는 method type parameter의 lower bound에 나타나고,
+- contravariant type parameter(T)는 method의 upper bound에 나타난다.
 
 내 생각대로 정리해 보면
  - 기존에는 T를 바로 prepend의 parameter로 전달하여 variance check에서 오류(method parameter는 contravariant만 입력되어야 함.)발생
@@ -202,11 +203,11 @@ variance check에서 에러가 발생하지 않는다. 왜냐하면
  Exercise
  아래 함수의 결과는 무엇일까?
  ```
- def f(xs: List[NonEmpty], x: Empty) = xs prepend x
+ def f(xs: List[NonEmpty], x: Empty) = xs prepend x  ?
  ```
  * 정답 : List[IntSet]
  * why?
-  - prepend[U >: T] => 여기서 T는 NonEmpty
-  - (elem: U) => 여기서 U는 Empty
+  - prepend[U >: T] => 여기서 T는 NonEmpty, U는 T의 supertype (IntSet)
+  - (elem: U) => 여기서 U는 Empty, 왜냐하면 xs prepend x에서 x는 Empty이며, elem은 x를 입력 파라미터로 받음.
   - T를 포함하는 supertype이 Empty인가? 아님.
   - scala에서는 추론을 통해 바로 상위단계 type인 IntSet을 U type으로 정의함.
