@@ -75,28 +75,29 @@ Java에서 Array는 covariant이다.
 1. a -> NE (초기에 NonEmpty를 할당)
 2. b -> a (a와 b가 동일한 NonEmpty 객체를 참조함.)
 3. b -> Empty (b가 참조하는 객체를 NonEMpty -> Empty로 변경, 이떄 a가 바라보는 객체도 Empty로 바뀌게됨.)
-              // RunTime시에 ArrayStoreException이 발생하게됨.
-              // Empty를 Array b에 할당하는 것을 막기 위한 Exception
+  - RunTime시에 ArrayStoreException이 발생하게됨.
+  - Empty를 Array b에 할당하는 것을 막기 위한 Exception
 4. s -> a[0] (새로운 NonEmpty 객체 s에 a[0]-Empty를 할당하려고 함.)
-왜 이런 문제가 발생할까?
-java에서 new NonEmptyp[]{new ...}는 기본으로 NonEmpty Array를 생성한다고 가정하게 된다.  
-그래서 Type tag에 NonEmpty를 표시하게 되고, Java RunTime 시에 Array에 해당 Type이 저장되는지 체크하게 된다.
-그런데 위의 예시에서는 Empty를 저장하려고 하면서, Runtime시에 Exception이 발생하게 되는 것이다.
-그럼 왜 java를 설계한 사람들은 이러한 오류를 유발하게 하는지 논쟁의 여지가 있을것이다.
-java측의 입장은 sort(Ojbect[] a)와 같은 메소드를 구현할때 Object를 상속받은 모든 Array를 전달가능 하도록 만들려는데 있었다고 한다. (java 초기버전)
-java1.5이후에는 generic type이 지원되었으나, 기존 설계를 변경할 수 없었음.
+ - 왜 이런 문제가 발생할까?
+ - java에서 new NonEmptyp[]{new ...}는 기본으로 NonEmpty Array를 생성한다고 가정하게 된다.  
+ - 그래서 Type tag에 NonEmpty를 표시하게 되고, Java RunTime 시에 Array에 해당 Type이 저장되는지 체크하게 된다.
+ - 그런데 위의 예시에서는 Empty를 저장하려고 하면서, Runtime시에 Exception이 발생하게 되는 것이다.
+ - 그럼 왜 java를 설계한 사람들은 이러한 오류를 유발하게 하는지 논쟁의 여지가 있을것이다.
+ - java측의 입장은 sort(Ojbect[] a)와 같은 메소드를 구현할때 Object를 상속받은 모든 Array를 전달가능 하도록 만들려는데 있었다고 한다. (java 초기버전)
+ - java1.5이후에는 generic type이 지원되었으나, 기존 설계를 변경할 수 없었음.
 
-* Scala에서는 위의 예시를 compile하면 2 line에서 compile 에러가 발생한다.
+
+- Scala에서는 위의 예시를 compile하면 2 line에서 compile 에러가 발생한다.
  - a는 Array [NonEmpty]
  - b는 Array[IntSet]
  - NonEmpty -> IntSet (IntSet을 상속받지만, Covariant가 아니므로 casting시 Type 오류가 발생함.)
 
 # 4.4 Variance (Optional)
 ## Variance
-List는 immutable, Array는 mutable(값을 update해야 함.)
-넓게 말하자면, elements가 변경될수 있는 mutable type은 covariant가 되어서는 안된다.
-하지만, immutabl type은 어떤 조건과 method가 맞으면 covariant로 되기 쉽다.
-이번 강의에서는 covariant가 되기 위한 구체적인 조건과 언제 type이 covariant가 될수 있는지와 언제 될수 없는지를 알아볼 것이다.
+- List는 immutable, Array는 mutable(값을 update해야 함.)
+- 넓게 말하자면, elements가 변경될수 있는 mutable type은 covariant가 되어서는 안된다.
+- 하지만, immutabl type은 어떤 조건과 method가 맞으면 covariant로 되기 쉽다.
+- 이번 강의에서는 covariant가 되기 위한 구체적인 조건과 언제 type이 covariant가 될수 있는지와 언제 될수 없는지를 알아볼 것이다.
 
 ## Definition of Variance
 C[T]를 paramaterized type이라고 하고, A,B를 A <: B 관계인 type으로 정의해보자. (A is subtype of B)
@@ -118,9 +119,9 @@ class C[A] {...} //nonvariant, A type만 저장가능
 type A = IntSet => NonEmpty
 type B = NonEmpty => IntSet
 ```
- - A와 B의 관계는 어떻게 표현될까?
- - 정답 : A <: B
- - why?
+- A와 B의 관계는 어떻게 표현될까?
+- 정답 : A <: B
+- why?
   * type A는 NonEmpty을 생성
   * type B는 IntSet를 생성
   * B가 좀 더 다양한 조건을 충족하는 type임. A는 NonEmpty만 return하는 한계
@@ -143,9 +144,9 @@ A1 => B1 <: A2 => B2 로 표현되는 것이다.
 
 ## Function Trait Declaration
 Function은
-argument type에서는 contravariant이고,  //많은 상위 type을 지원해야 하고,
-result type에서는 covariant이다.        //많은 하위 type을 지원해야 한다. (의미가 맞나?)
-위 정의는 Function1 trait에 대하여 아래와 같은 개선을 이끌어낸다.
+- argument type에서는 contravariant이고,  //많은 상위 type을 지원해야 하고,
+- result type에서는 covariant이다.        //많은 하위 type을 지원해야 한다. (의미가 맞나?)
+- 위 정의는 Function1 trait에 대하여 아래와 같은 개선을 이끌어낸다.
 ```
 package scala
 trait Function1 [-T, +U] {
@@ -166,15 +167,15 @@ trait List[+T] {
 }
 ```
 왜 위의 code는 non type-check 에러가 발생하는가?
-So what we get is an error, which says "covariant type T occurs in contravariant position in type T of value elem."
-위의 variance check에서 정의한 Rul에 따르면 method parameter에서는 contravariant만 나타나게 되어 있지만, prepend에서는 covariant인 T을 입력값으로 설정하였다.
-이는 LSP를 위반하기 때문이다.
+- So what we get is an error, which says "covariant type T occurs in contravariant position in type T of value elem."
+- 위의 variance check에서 정의한 Rul에 따르면 method parameter에서는 contravariant만 나타나게 되어 있지만, prepend에서는 covariant인 T을 입력값으로 설정하였다.
+- 이는 LSP를 위반하기 때문이다.
 
 예를 들어보자
-List[IntSet]의 type인 xs에서 xs.prepend(Empty)를 실행하면 정상수행된다.
-Empty는 IntSet의 하위 type이므로 문제가 없음.
-그런데.
-List[NonEmpty]의 type인 ys에서 ys.prepend(Empty)를 실행하면 에러가 발생한다.
+- List[IntSet]의 type인 xs에서 xs.prepend(Empty)를 실행하면 정상수행된다.
+- Empty는 IntSet의 하위 type이므로 문제가 없음.
+- 그런데.
+- List[NonEmpty]의 type인 ys에서 ys.prepend(Empty)를 실행하면 에러가 발생한다.
  - type mismatch
  - required: NonEmpty
  - found: Empty

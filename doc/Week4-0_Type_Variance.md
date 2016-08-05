@@ -8,6 +8,7 @@ http://jetzt.tistory.com/927 && http://changsuk.me/?p=2031
    * Compile 시점에 Type Parameter의 유효성을 검증함(Type 추론 활용)
  - Generic Class
    * Class에 Type Parameter를 지정하여 Generic Class 선언 가능
+   
      ```
       class Stack[T] {
         var elems: List[T] = Nil

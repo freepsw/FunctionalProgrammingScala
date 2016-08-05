@@ -13,7 +13,9 @@ http://blog.seulgi.kim/2014/09/scala-implicit-keyword-0.html
  * implicit class는 내부적으로 class 명과 동일한 implicit converter를 추가하는 방식으로 동작한다. (implicit converter의 문법적 편의성 제공)
  * 제약조건
    > implicit class는 trait/class/object 내부에 정의되어야 함.
+
    > non-implicit인 pararameter가 반드시 1개인 constructor가 있어야 함.
+
    > implicit class가 선언된 scope 내부에는 같은 이름의 어떤것도 있으면 않됨.
 
  - implicit parameter
@@ -21,6 +23,7 @@ http://blog.seulgi.kim/2014/09/scala-implicit-keyword-0.html
   * 구체적으로 말하면, 함수를 호출할때 생략된 인자를 자동으로 추가해 주는 것.
   * 인자를 무엇으로 추가할지 정하는 규칙
    > 1 규칙. 함수가 호출된 scope에 prefix 없이 접근할 수 있는 implicit parameter같은 변수 중, implicit label이 붙은 변수 사용. (implicit parameter, implicit modifier가 있는 local 변수)
+
    > 2 규칙. Companion object에 정의된 변수 중 implicit parameter로 선언된 변수 중 implicit label이 붙은 변수 사용.
 
 
@@ -30,6 +33,7 @@ http://blog.seulgi.kim/2014/09/scala-implicit-keyword-0.html
 def msort[T](xs: List[T]): List[T] = ...
 ```
 아마도 동작하지 않을 것이다. 왜냐하면 merge함수에서 < (비교 연산자)가 임의 Type인 T를 위해서 정의되지 않았기 때문이다.
+
 그럼, merge 함수를 parameterized하여 필요한 비교연산자를 선언하면 되지 않을까?
 
 ```
@@ -52,7 +56,9 @@ def msort[T](xs: List[T]): List[T] = {
 }
 ```
 Type parameter를 사용하여 다양한 값을 처리할 수 있도록 코드를 변경하였다.
+
 그런데 "x < y"에서 "can not resolve symbol <" 오류가 발생한다.
+
 < 연산자가 모든 T type에 존재하지 않기 때문..
 어떻게 해결할까?
 

@@ -25,13 +25,13 @@ def name // Var의 String 객체
 이런 방식은 확장 및 수정에 아주 많은 시간이 소요된다.
 
 ## Non-Solution : Type Tests and Type Casts
-type tests와 type casts를 활용하는 방안이다.
-Scala는 Any class에 정의된 isInstanceOf[T]와 asInstanceOf[T]를 사용할 수 있다.
-Java와 비교해 보면
-Scala (x.isInstanceOf[T])  // type tests
-Java  (x instanceof T)
-Scala (x.asInstanceOf[T])
-Java  ((T) x )
+- type tests와 type casts를 활용하는 방안이다.
+- Scala는 Any class에 정의된 isInstanceOf[T]와 asInstanceOf[T]를 사용할 수 있다.
+- Java와 비교해 보면
+ - Scala (x.isInstanceOf[T])  // type tests
+ - Java  (x instanceof T)
+ - Scala (x.asInstanceOf[T])
+ - Java  ((T) x )
 
 ## Eval with Type Tests and Type casts
 ```
@@ -104,6 +104,7 @@ object Sum {
 ```
 일단 Companion object를 생성하여 apply method를 자동으로 추가한다.
 위와 같이 정의함에 따라 new Number(1) 대신에  Number(1)을 직접 호출할 수 있다.  (Number.apply(1) 과 동일)
+
 하지만 이 class들은 아무것도 정의되어 있지 않은 상태이다. 그러면 어떻게 member에 접근할 수 있을까?
 
 ## Pattern Matching
@@ -135,6 +136,7 @@ trait Expr{
 }
 ```
 this는 receiver object 자체를 의미함. e1.eval을 호출했다면 this는 e1이 됨.
+
 trait에 eval을 정의할 것인지, Sum or Number와 같은 구체 sub class에 정의할 것인지는 취향 또는 알고리즘에 따라 다름.
 
 
@@ -195,3 +197,30 @@ x :: y :: Lists(xs, ys) :: zs인 List의 length를 가장 정확하게 match하�
  - x, y, Lists(xs, ys)는 구체적인 값이 있는 elements
  - zs는 Empty가 될 수 있으므로 length에서 제외
  - 따라서 Length는 최소 3개 이상.
+
+## Sorting Lists
+List (7, 3, 9, 2)를 ascending order로 sorting해 보자.
+- 일단 tail list(3, 9, 2)를 List(2, 3, 9)로 변환
+- 그리고 7을 적절한 위치에 insert한다. 최종 결과는 List(2, 3, 7, 9)
+아래의 코드로 구현해 보자.
+```
+def isort(xs: List[Int]): List[Int] = xs match {
+  case List() => List()
+  case y :: ys => insert(y, isort(ys))
+}
+```
+tail을 기준으로 재귀적으로 호출하여 elements를 거꾸로 저장하는 함수.
+그럼 inset는 어떻게 구현되어야 할까?
+
+```
+def insert(x: Int, xs: List[Int]): List[Int] = xs match {
+  case List() => List(x)
+  case y :: ys => if (x <= y) x :: xs else y :: insert(x, ys)
+}
+```
+그럼 위와 같은 알고리즘의 성능은 어떻게 측정될까?
+정답
+ - N * N
+왜냐하면, isort에서 N번의 loop를 수행하면서 매번 insert를 하게 되고,
+insert에서 항상 x > y 인 경우가 발생하여 insert를 재귀호출 하게 되면 이와 같은 상황이 발생됨.
+예를 들어 List (10 .... 1)을 isort로 실행하여 List(1 ... 10)으로 생성할 경우.
