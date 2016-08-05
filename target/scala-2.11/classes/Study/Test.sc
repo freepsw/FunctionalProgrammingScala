@@ -38,9 +38,24 @@ leafs = leafs ::: List("leaf1", "leaf2")
 var pipelines: List[List[String]] = List(List("a", "b"), List("c"), List("d", "e"))
 
 var test: List[String] = List("1", "2")
-test.getClass.getName
 
+pipelines = test :: pipelines
+//아래와 동일
 pipelines = pipelines.::(test)
+// 둘다 List[List[String]] 구조에 List[String]을 add하는 방식으로 진행
+// 그런데 왜 순서가 서로 다를까?
+// scala에서는 left -> right로 해석되므로, test를 pipelines에 추가한다는 의미로 표현했을까?
+
+pipelines = pipelines :: test
+// 아래와 동일
+pipelines = test.::(pipelines)
+// 이 방식은 List[String] 구조에 String을 추가한다는 의미임.
+// test Type이 List[String]으로 정해져 있으므로, String이 추가될 것으로 기대하고 있음.
+// 하지만 실제 입력되는 값은 List[List[String]]이 입력되어서 에러가 발생함.
+
+
+
+
 
 //pipelines = pipelines :: test
 
