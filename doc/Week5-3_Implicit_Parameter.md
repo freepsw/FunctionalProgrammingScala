@@ -13,11 +13,11 @@ http://blog.seulgi.kim/2014/09/scala-implicit-keyword-0.html
  * implicit class는 내부적으로 class 명과 동일한 implicit converter를 추가하는 방식으로 동작한다. (implicit converter의 문법적 편의성 제공)
  * 제약조건
 
-   >1. implicit class는 trait/class/object 내부에 정의되어야 함.
+   > implicit class는 trait/class/object 내부에 정의되어야 함.
 
-   >2. non-implicit인 pararameter가 반드시 1개인 constructor가 있어야 함.
-   
-   >3. implicit class가 선언된 scope 내부에는 같은 이름의 어떤것도 있으면 않됨.
+   > non-implicit인 pararameter가 반드시 1개인 constructor가 있어야 함.
+
+   > implicit class가 선언된 scope 내부에는 같은 이름의 어떤것도 있으면 않됨.
 
  - implicit parameter
   * 함수를 호출할 때 인자를 생략할 수 있도록 하는 역할
