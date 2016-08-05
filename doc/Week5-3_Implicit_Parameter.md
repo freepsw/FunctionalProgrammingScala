@@ -12,6 +12,7 @@ http://blog.seulgi.kim/2014/09/scala-implicit-keyword-0.html
  * 원래 class는 바꾸지 않고, class의 implicit conversion을 통해 호출할 함수 추가.
  * implicit class는 내부적으로 class 명과 동일한 implicit converter를 추가하는 방식으로 동작한다. (implicit converter의 문법적 편의성 제공)
  * 제약조건
+
    > implicit class는 trait/class/object 내부에 정의되어야 함.
 
    > non-implicit인 pararameter가 반드시 1개인 constructor가 있어야 함.
@@ -22,9 +23,10 @@ http://blog.seulgi.kim/2014/09/scala-implicit-keyword-0.html
   * 함수를 호출할 때 인자를 생략할 수 있도록 하는 역할
   * 구체적으로 말하면, 함수를 호출할때 생략된 인자를 자동으로 추가해 주는 것.
   * 인자를 무엇으로 추가할지 정하는 규칙
-   > 1 규칙. 함수가 호출된 scope에 prefix 없이 접근할 수 있는 implicit parameter같은 변수 중, implicit label이 붙은 변수 사용. (implicit parameter, implicit modifier가 있는 local 변수)
 
-   > 2 규칙. Companion object에 정의된 변수 중 implicit parameter로 선언된 변수 중 implicit label이 붙은 변수 사용.
+   > 1. 규칙. 함수가 호출된 scope에 prefix 없이 접근할 수 있는 implicit parameter같은 변수 중, implicit label이 붙은 변수 사용. (implicit parameter, implicit modifier가 있는 local 변수)
+
+   > 2. 규칙. Companion object에 정의된 변수 중 implicit parameter로 선언된 변수 중 implicit label이 붙은 변수 사용.
 
 
 ## Making Sort more general
