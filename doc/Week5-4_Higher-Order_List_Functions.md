@@ -100,3 +100,59 @@ def encode[T](xs: List[T]): List[(T, Int)] = {
 encode(List("a", "a", "a", "b", "c", "c", "a"))
 //List(("a", 3), ("b", 1), ("c", 2), ("a", 1))
 ```
+
+# 5.5 Reduction of Lists
+이번 코스에서는 forder or reduce combinators를 다룰 것이다.
+
+list에서 일반적으로 제공하는 또다른 operation은 주어진 operator를 이용하여 elements를 결합하는 것이다.
+예를 들면
+```
+sum(List(x1, ...., xn))      = 0 + x1 + ..... + xn
+product(List(x1, ....., xn)) = 1 * x1 * ..... * xn
+```
+위 함수는 재귀방식을 통해서 구현할 수 있다.
+```
+def sum(xs: List[Int]): Int = xs match {
+  case Nil => 0
+  case y :: ys => y + sum(ys)
+}
+```
+
+## FoldLeft
+sum과 product 함수는 아래와 같이 정의될 수 있다.
+```
+def sum(xs: List[Int])     = (xs foldLeft 0)(_ + _)
+def product(xs: List[Int]) = (xs foldLeft 1)(_ * _)
+```
+
+## Implementations of ReduceLeft and FoldLeft
+
+## Difference between FoldLeft and FoldRight
+아래의 코드는 2개의 list를 concat하는 함수이다.
+```
+def concat[T](xs: List[T], ys: List[T]): List[T] =
+  (xs foldRight ys) (_ :: _)
+```
+- 만약 foldRight를 foldLeft로 변경하면 어떤 일이 발생할까?
+- 정답은 컴파일 오류(::에서 발생, not a member of type parameter T)
+ - Why?
+ - 위의 코드를 좀 구체적으로 분해해 보면
+ ```
+ def concat[T](xs: List[T], ys: List[T]): List[T] = {
+  (xs foldRight ys) ((x, y) => x :: y )
+}
+```
+- 여기서 x는 T type이고, y는 List[T]로 정의되어 있다.
+- (doc/~.pptx 41page 참조) foldRight의 작동방식이 도식화 되어 있음.
+- 왼쪽(left, 여기서는 x-T)의 elements를 중앙의 operator를 통해 오른쪽(right, y- List[T], 실제는 하위 sub tree)과 combine 함.
+- 따라서 실제 (_ :: _) => T :: List[T]로 해석되고,
+- 4 :: List(1,2)과 같은 방식으로 실행된다.
+- 4를 List(1,2)의 앞에 추가함.(4, 1, 2)
+
+- 그런데 foldRight -> foldLeft로 변경하면?
+- (xs foldLeft ys) ((x, y) => x :: y )
+- foldRight와 반대로 왼쪽의 y가 T, x가 List[T]로 해석된다. (왜? foldLeft함수가 그렇게 처리하니까..)
+- 따라서 x :: y는 List[T] :: T로 해석되고,
+- List(1,2) :: 4 => 4.::(List(1,2))처럼 실행된다.
+- 하지만 4(Int type)은 :: 연산자가 존재하지 않는다.
+- 그래서 에러가 발생!!!! 아주 자세히 풀다보니까 좀 복잡하네..
