@@ -91,3 +91,86 @@ x1.product // 2
 x1.max  // 2
 x1.min  // 1
 ``
+
+
+## Example : Combinations
+x(1 ~ M)와 y(1 ~ N)의 모든 combinationd을 list로 변환
+```
+(1 to 5) flatMap (x => (1 to 2) map (y => (x, y)))
+//  Vector((1,1), (1,2), (2,1), (2,2), (3,1), (3,2), (4,1), (4,2), (5,1), (5,2))
+```
+
+## Example : Scala product
+2개 Vector의 scala product를 계산하라.
+- n(1 ~ n), sum(x1*y1 + x2*y2 + ..... xn*yn)
+```
+def scalaProduct(xs: Vector[Double], ys: Vector[Double]): Double = {
+  (xs zip ys).map(xy => xy._1 * xy._2).sum
+}
+scalaProduct(Vector(1, 2, 3), Vector(1,2,3))
+
+// res0: Double = 14.0
+```
+위의 코드를 patten matching을 이용해서 구현해 보자
+```
+def scalaProduct(xs: Vector[Double], ys: Vector[Double]): Double = {
+  (xs zip ys).map{ case (x, y) => x * y}.sum
+}
+scalaProduct(Vector(1, 2, 3), Vector(1,2,3))
+```
+
+## Excercise : Prime
+```
+def isPrime(n: Int): Boolean = (2 until n) forall (d => n % d != 0)
+isPrime(3) // true
+isPrime(4) // false
+```
+
+
+# 6.2  Combinatorial Search and For-Expressions
+## Handling Nested Sequences
+- 양수 n이 주어졌을때, 1 <= j < i < n을 만족하고, i + j가 prime number인 모든 i와 j를 찾아라.
+- imperative 프로그래밍에서는 이중 for loop를 이용하여 구현하게 될 것이다.
+- Functional 방식으로는 어떻게 구현하는지 보자.
+ - 우선 (i, j) pair를 생성한다.
+ - i + j가 prime인 pair를 Filtering한다.
+- 아래 코드처럼 구현될 수 있다.
+```
+(1 until 5 ) flatMap (i => (1 until i ) map (j => (i, j))) filter (pair => isPrime(pair._1 + pair._2))
+//Vector((2,1), (3,2), (4,1), (4,3))
+```
+
+## For-Expression Example
+for (s) yield e 스타일로 호출하는 것을 For-Expression이라 한다.ㄴ
+```
+case class Person(name: String, age: Int)
+
+for( p <- persons if p.age > 20) yeild p.name
+2개의 구문은 동일한 결과를 리턴한다.
+persons filter (p => p.age > 20) map (p => p.name)
+```
+위의 scalaProduct 함수를 For-Expression방식으로 구현해 보자
+```
+def scalaProduct(xs: Vector[Double], ys: Vector[Double]): Double = {
+  //(xs zip ys).map{ case (x, y) => x * y}.sum
+  (for (
+    (x, y) <- xs zip ys
+  ) yield x * y).sum
+}
+scalaProduct(Vector(1, 2, 3), Vector(1,2,3))
+```
+
+
+# 6.3 Combinatorial_Search_Example
+
+## Sets
+Set은 sequence와 비슷하게 작성할 수 있다.
+
+데부분의 sequence operations은 sets에서도 사용가능하다.
+```
+val s = (1 to 6).toSet
+val fruit = Set("apple", "banana", "pear")
+s map (_ + 2)
+fruit filter (_.startsWith == "app")
+s.nonEmpty
+```
