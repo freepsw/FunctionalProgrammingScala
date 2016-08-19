@@ -55,7 +55,7 @@ s filter (c => c.isUpper)
 - 또 다른 간단한 sequence는 range다.
 - 3개의 연산자를 가지고 있으며,
  - to (inclusive), until (exclusive), by (다음 단계를 결정하는 값을 지정)
- ```
+```
 val r: Range = 1 until 5 // Range(1, 2, 3, 4)
 val s: Range = 1 to 5    // Range(1, 2, 3, 4, 5)
 1 to 10 by 3             // Range(1, 4, 7, 10)
@@ -90,7 +90,7 @@ x1.sum  // 3
 x1.product // 2
 x1.max  // 2
 x1.min  // 1
-``
+```
 
 
 ## Example : Combinations
@@ -102,7 +102,9 @@ x(1 ~ M)와 y(1 ~ N)의 모든 combinationd을 list로 변환
 
 ## Example : Scala product
 2개 Vector의 scala product를 계산하라.
+
 - n(1 ~ n), sum(x1*y1 + x2*y2 + ..... xn*yn)
+
 ```
 def scalaProduct(xs: Vector[Double], ys: Vector[Double]): Double = {
   (xs zip ys).map(xy => xy._1 * xy._2).sum
