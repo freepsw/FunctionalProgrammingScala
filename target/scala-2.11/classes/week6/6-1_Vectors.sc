@@ -9,7 +9,7 @@ scalaProduct(Vector(1, 2, 3), Vector(1,2,3))
 
 
 for {
-  i <- 1 until 3
+  i <- 1 until 5
   j <- 1 until i
   if isPrime(i + j)
 } yield (i, j)

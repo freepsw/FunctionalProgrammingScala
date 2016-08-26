@@ -92,13 +92,9 @@ val test = for {
   col <- 0 until 5
   if( col > 2)
 } yield col :: List(0)
-
 */
 
-
-
 /*
-
 val s = (1 to 6).toSet
 val fruit = Set("apple", "banana", "pear")
 s map (_ + 2)
@@ -108,5 +104,6 @@ s.nonEmpty
 
 s map (_ / 2 )
 s contains 5
-
 */
+
+List(1,2,3).forall(x => x > 1)

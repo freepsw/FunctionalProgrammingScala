@@ -12,7 +12,6 @@ def baseball(guess: Array[Int]) ={
     seq += 1
   }
   s"$strike Strke and $ball Ball"
-  msg
 }
 
 val guess: Array[Int] = Array(3,8,5)

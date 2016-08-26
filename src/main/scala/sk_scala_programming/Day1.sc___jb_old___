@@ -1,0 +1,2 @@
+
+val a = List(1, 7, 2, 9).reduceLeft(_-_)
