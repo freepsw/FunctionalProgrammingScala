@@ -331,3 +331,148 @@ fruit.sorted
 fruit groupBy (_.head)  //fruit.groupBy(_.head) 동일한 결과
 // res2: scala.collection.immutable.Map[Char,List[String]] = Map(p -> List(pear, pineapple), a -> List(apple), o -> List(orange))
 ```
+
+
+## polynomial example (다항식)
+- 다항식을 표현하기 위해 Map을 활용할 수 있다.
+- 예를 들면 x^3 -2x +5는 아래과 같이 표현
+
+```
+Map(0 -> 5, 1 -> -2, 3 -> 1)
+```
+
+- 그러면 다항식간의 연산도 표현이 가능할 것이다. + 연산을 구현해 보자
+
+```
+class Poly(val terms: Map[Int, Double]) {
+  def + (other: Poly) = {
+    new Poly(terms ++ other.terms)
+  }
+  override def toString =
+    (for((exp, coeff) <- terms.toList.sorted.reverse) yield coeff + "x^" + exp) mkString " + "
+}
+
+val p1 = new Poly(Map(1 -> 2.0, 3 -> 4.0, 5 -> 6.2))
+val p2 = new Poly(Map(0 -> 3.0, 3 -> 7.0))
+p1 + p2
+
+p1: Poly = 6.2x^5 + 4.0x^3 + 2.0x^1
+p2: Poly = 7.0x^3 + 3.0x^0
+
+res0: Poly = 6.2x^5 + 7.0x^3 + 2.0x^1 + 3.0x^0  //
+```
+
+- 여기서 Map의 Key가 3이 2개 있으므로, 나중에 업데이트된 7만 존재하게 됨.
+- 그런데 우리가 원하는 것은 4와 7을 더하는 것이므로, 다시 수정해 보자.
+
+```
+class Poly(val terms: Map[Int, Double]) {
+
+  // ++ 연산을 하기 전에 중복된 key가 있으면 value를 더하도록 map함수에 추가
+  def + (other: Poly) = new Poly(terms ++ (other.terms map adjust))
+
+  //
+  def adjust(term: (Int, Double)) : (Int, Double) = {
+    val (exp, coeff) = term
+    terms get exp match {  //동일한 Key(지수)가 있는지 확인하여, 있으면 값을 더함.
+      case Some(coeff1) => exp -> (coeff + coeff1)
+      case None => exp -> coeff
+    }
+  }
+  override def toString =
+    (for((exp, coeff) <- terms.toList.sorted.reverse) yield coeff + "x^" + exp) mkString " + "
+}
+
+val p1 = new Poly(Map(1 -> 2.0, 3 -> 4.0, 5 -> 6.2))
+val p2 = new Poly(Map(0 -> 3.0, 3 -> 7.0))
+p1 + p2
+
+res0: Poly = 6.2x^5 + 11.0x^3 + 2.0x^1 + 3.0x^0 // 원하는 결과 출력
+```
+
+- 다항식간의 + 연산을 구현해 냈다... 그런데 너무 코드가 복잡하다.. 더 심플한 방법은 없을까?
+- map은 partial function이므로, key가 없는 경우 map함수를 적용시 exception이 발생한다.
+- 이런 exception을 방지하기 위하여 withDefaultValue라는 함수를 제공하여 map을 total function으로 바꿔준다. (total은 완전한수라는 의미인가?)
+
+```
+val capitalOfCountry1 = Map("US" -> "Washington", "Switzerland" -> "Bern")
+val cap1 = capitalOfCountry1 withDefaultValue "<unknown>"
+cap1("Addorra")
+
+res0: String = <unknown>
+```
+
+- 그럼 withDefaultValue를 이용하여 다항식 연산하는 함수를 수정해 보자
+
+```
+class Poly(val terms0: Map[Int, Double]) {
+  val terms = terms0 withDefaultValue(0.0)  // 여기서 map의 key가 없는 경우 Default값을 반환
+
+  def + (other: Poly) = new Poly(terms ++ (other.terms map adjust))
+  def adjust(term: (Int, Double)) : (Int, Double) = {
+    val (exp, coeff) = term
+    exp -> (coeff + terms(exp)) // case로 비교하는 부분 대신 withDefaultValue가 적용된 map에서 key를 매핑
+  }
+  override def toString =
+    (for((exp, coeff) <- terms.toList.sorted.reverse) yield coeff + "x^" + exp) mkString " + "
+}
+
+
+val p1 = new Poly(Map(1 -> 2.0, 3 -> 4.0, 5 -> 6.2))
+val p2 = new Poly(Map(0 -> 3.0, 3 -> 7.0))
+p1 + p2
+res1: Poly = 6.2x^5 + 11.0x^3 + 2.0x^1 + 3.0x^0
+
+p1.terms(7)
+res2: Double = 0.0
+
+```
+
+- 이번엔 Poly를 생성할 때 마다 Map(1 -> 2.0 ...)으로 생성하는 부분을 좀 더 개선해보자.
+- scala에서는 class 생성자에서 입력 파라미터를 binding하는 방법을 제공한다. def this(binding: 입력파라미터 type)
+
+```
+class Poly(val terms0: Map[Int, Double]) {
+  // this를 통해 입력 파라미터를 Map으로 변환.
+  // (Int, Double)* 에서 *의 의미는 입력값이 sequence하게 연속적으로 입력된다는 의미.
+  def this(bindings: (Int, Double)*) = this(bindings.toMap)
+
+  val terms = terms0 withDefaultValue(0.0)
+
+  def + (other: Poly) = new Poly(terms ++ (other.terms map adjust))
+  def adjust(term: (Int, Double)) : (Int, Double) = {
+    val (exp, coeff) = term
+    exp -> (coeff + terms(exp))
+  }
+  override def toString =
+    (for((exp, coeff) <- terms.toList.sorted.reverse) yield coeff + "x^" + exp) mkString " + "
+}
+
+
+val p1 = new Poly(1 -> 2.0, 3 -> 4.0, 5 -> 6.2)
+val p2 = new Poly(Map(0 -> 3.0, 3 -> 7.0))
+p1 + p2
+```
+
+- 다항식간의 + 연산을 위해서 ++ 대신에 foldLeft를 쓰는 것이 좀 더 효과적이다.
+- 왜냐하면, ++ 를 위해서는 매번 list를 생성해야 하지만, -> def + (other: Poly) = new Poly(terms ++ (other.terms map adjust))
+- foldLeft에서는 map에서 바로 값을 추가하는 방식이기 때문이다.
+
+```
+class Poly(val terms0: Map[Int, Double]) {
+  def this(bindings: (Int, Double)*) = this(bindings.toMap)
+
+  val terms = terms0 withDefaultValue(0.0)
+
+  def + (other: Poly) = new Poly((other.terms foldLeft terms)(addTerm))
+  def addTerm(terms: Map[Int, Double], term: (Int, Double)) : Map[Int, Double] = {
+    val (exp, coeff) = term
+    terms + (exp -> (coeff + terms(exp))) // 별도의 Map을 생성하지 않고, 값을 바로 추가함.
+  }
+  override def toString =
+    (for((exp, coeff) <- terms.toList.sorted.reverse) yield coeff + "x^" + exp) mkString " + "
+}
+val p1 = new Poly(1 -> 2.0, 3 -> 4.0, 5 -> 6.2)
+val p2 = new Poly(Map(0 -> 3.0, 3 -> 7.0))
+p1 + p2
+```
